@@ -1,0 +1,183 @@
+### Регистрация
+
+POST http://localhost:8888/api/v1/registration
+Content-Type: application/json
+
+{
+  "username": "petya",
+  "password": "password"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.global.set("auth_token", response.body.token);
+});
+%}
+
+### Авторизация (не обязательно - можно использовать сразу из регистрации для всех запросов)
+### User vasya предзашит (чтобы не создавать каждый раз)
+
+POST http://localhost:8888/api/v1/authentication
+Content-Type: application/json
+
+{
+  "username": "vasya",
+  "password": "password"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.global.set("auth_token", response.body.token);
+});
+%}
+
+### me
+
+GET http://localhost:8888/api/v1/me
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Список постов
+
+GET http://localhost:8888/api/v1/posts
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Создание/обновление поста (если id != 0)
+
+POST http://localhost:8888/api/v1/posts
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "id": 0,
+  "content": "First Post🤩"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Создание/обновление поста (если id != 0)
+
+POST http://localhost:8888/api/v1/posts
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "id": 1,
+  "content": "First Post🤩 (UPDATED)"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Создание репоста (sourceId должен существовать) - это должны сделать студенты
+
+POST http://localhost:8888/api/v1/posts/1/reposts
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "id": 0,
+  "content": "Funny post"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 501, "Response status is not 200");
+});
+%}
+
+### Получение поста по id
+
+GET http://localhost:8888/api/v1/posts/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Получение последних 50 постов (самых новых)
+
+GET http://localhost:8888/api/v1/posts/recent
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Получение последних 50 постов до id (т.е. опубликованных раньше)
+
+GET http://localhost:8888/api/v1/posts/before/2
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Получение последних 50 постов после id (т.е. опубликованных позже)
+
+GET http://localhost:8888/api/v1/posts/after/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Лайк по id
+
+POST http://localhost:8888/api/v1/posts/1/likes
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Дизлайк по id
+
+DELETE http://localhost:8888/api/v1/posts/1/likes
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+###
