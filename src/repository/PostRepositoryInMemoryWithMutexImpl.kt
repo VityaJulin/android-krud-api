@@ -78,5 +78,19 @@ class PostRepositoryInMemoryWithMutexImpl : PostRepository {
             }
         }
     }
+
+    override suspend fun repostById(id: Long, myId: Long): PostModel? {
+        mutex.withLock {
+            return when (val index = items.indexOfFirst { it.id == id }) {
+                -1 -> null
+                else -> {
+                    val item = items[index]
+                    val copy = item.copy(reposts = item.reposts)
+                    items[index] = copy
+                    copy
+                }
+            }
+        }
+    }
 }
 
