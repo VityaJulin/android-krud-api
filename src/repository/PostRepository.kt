@@ -10,4 +10,5 @@ interface PostRepository {
     suspend fun removeByIdAndOwnerId(id: Long, ownerId: Long)
     suspend fun likeById(id: Long, myId: Long): PostModel?
     suspend fun dislikeById(id: Long, myId: Long): PostModel?
+    suspend fun repostById(id: Long, myId: Long): PostModel?
 }

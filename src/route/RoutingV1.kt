@@ -126,7 +126,13 @@ class RoutingV1(
                             call.respond(response)
                         }
                         post("/{id}/reposts") {
-                            TODO("students must implement this endpoint")
+                            val me = call.authentication.principal<UserModel>()!!
+                            val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
+                                "id",
+                                "Long"
+                            )
+                            val response = postService.repostById(id, myId = me.id)
+                            call.respond(response)
                         }
                     }
 

@@ -75,6 +75,11 @@ class PostService(private val repo: PostRepository, private val userService: Use
         return combinePostDto(post, myId)
     }
 
+    suspend fun repostById(id: Long, myId: Long): PostResponseDto {
+        val post = repo.repostById(id, myId) ?: throw NotFoundException()
+        return combinePostDto(post, myId)
+    }
+
     private fun mapToSourceDto(
         post: PostModel,
         owners: List<UserResponseDto>,
