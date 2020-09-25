@@ -125,6 +125,17 @@ class RoutingV1(
                             val response = postService.dislikeById(id, myId = me.id)
                             call.respond(response)
                         }
+
+                        post("/{id}/dislikes") {
+                            val me = call.authentication.principal<UserModel>()!!
+                            val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
+                                    "id",
+                                    "Long"
+                            )
+                            val response = postService.dislikeById(id, myId = me.id)
+                            call.respond(response)
+                        }
+
                         post("/{id}/reposts") {
                             val me = call.authentication.principal<UserModel>()!!
                             val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
