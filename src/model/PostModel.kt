@@ -7,6 +7,7 @@ data class PostModel(
     val content: String? = null,
     val created: Int = (System.currentTimeMillis() / 1000).toInt(),
     val likes: Set<Long> = setOf(),
+    val dislikes: Set<Long> = setOf(),
     val reposts: Map<Long, Long> = mapOf(),
     val link: String? = null,
     val type: PostType = PostType.POST,
