@@ -38,13 +38,13 @@ class PostService(private val repo: PostRepository, private val userService: Use
 
     suspend fun save(input: PostRequestDto, myId: Long): PostResponseDto {
         val model = PostModel(
-            id = input.id,
-            ownerId = myId,
-            content = input.content,
-            link = input.link,
-            attachment = input.attachmentId?.let {
-                AttachmentModel(input.attachmentId, mediaType = MediaType.IMAGE)
-            })
+                id = input.id,
+                ownerId = myId,
+                content = input.content,
+                link = input.link,
+                attachment = input.attachmentId?.let {
+                    AttachmentModel(input.attachmentId, mediaType = MediaType.IMAGE)
+                })
 
         if (input.id != 0L) {
             // concurrency issues ignored
@@ -81,52 +81,52 @@ class PostService(private val repo: PostRepository, private val userService: Use
     }
 
     private fun mapToSourceDto(
-        post: PostModel,
-        owners: List<UserResponseDto>,
-        myId: Long
+            post: PostModel,
+            owners: List<UserResponseDto>,
+            myId: Long
     ): PostResponseDto {
         return PostResponseDto.from(
-            post = post,
-            source = null,
-            owner = owners.find { it.id == post.ownerId } ?: UserResponseDto.unknown(),
-            likedByMe = post.likes.contains(myId),
-            repostedByMe = post.reposts.containsValue(myId)
+                post = post,
+                source = null,
+                owner = owners.find { it.id == post.ownerId } ?: UserResponseDto.unknown(),
+                likedByMe = post.likes.contains(myId),
+                dislikedByMe = post.dislikes.contains(myId)
         )
     }
 
     private fun mapToPostDto(
-        post: PostModel,
-        sourcesDto: List<PostResponseDto>,
-        owners: List<UserResponseDto>,
-        myId: Long
+            post: PostModel,
+            sourcesDto: List<PostResponseDto>,
+            owners: List<UserResponseDto>,
+            myId: Long
     ): PostResponseDto {
         return PostResponseDto.from(
-            post = post,
-            source = sourcesDto.find { it.id == post.sourceId },
-            owner = owners.find { it.id == post.ownerId } ?: UserResponseDto.unknown(),
-            likedByMe = post.likes.contains(myId),
-            repostedByMe = post.reposts.containsValue(myId)
+                post = post,
+                source = sourcesDto.find { it.id == post.sourceId },
+                owner = owners.find { it.id == post.ownerId } ?: UserResponseDto.unknown(),
+                likedByMe = post.likes.contains(myId),
+                dislikedByMe = post.dislikes.contains(myId)
         )
     }
 
     private fun mapToPostDto(
-        post: PostModel,
-        sourceDto: PostResponseDto?,
-        owners: List<UserResponseDto>,
-        myId: Long
+            post: PostModel,
+            sourceDto: PostResponseDto?,
+            owners: List<UserResponseDto>,
+            myId: Long
     ): PostResponseDto {
         return PostResponseDto.from(
-            post = post,
-            source = sourceDto,
-            owner = owners.find { it.id == post.ownerId } ?: UserResponseDto.unknown(),
-            likedByMe = post.likes.contains(myId),
-            repostedByMe = post.reposts.containsValue(myId)
+                post = post,
+                source = sourceDto,
+                owner = owners.find { it.id == post.ownerId } ?: UserResponseDto.unknown(),
+                likedByMe = post.likes.contains(myId),
+                dislikedByMe = post.dislikes.contains(myId)
         )
     }
 
     private suspend fun combinePostDto(
-        post: PostModel,
-        myId: Long
+            post: PostModel,
+            myId: Long
     ): PostResponseDto {
         val source = post.sourceId?.let { repo.getById(it) }
 
@@ -140,8 +140,8 @@ class PostService(private val repo: PostRepository, private val userService: Use
 
 
     private suspend fun combinePostsDto(
-        posts: List<PostModel>,
-        myId: Long
+            posts: List<PostModel>,
+            myId: Long
     ): List<PostResponseDto> {
         val sources = repo.getByIds(posts.asSequence().map { it.sourceId }.filterNotNull().toList())
         val ownerIds = (posts + sources).map { it.ownerId }
