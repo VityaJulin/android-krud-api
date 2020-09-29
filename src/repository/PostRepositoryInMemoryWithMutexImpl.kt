@@ -71,7 +71,7 @@ class PostRepositoryInMemoryWithMutexImpl : PostRepository {
                 -1 -> null
                 else -> {
                     val item = items[index]
-                    val copy = item.copy(likes = item.likes - myId)
+                    val copy = item.copy(dislikes = item.dislikes + myId)
                     items[index] = copy
                     copy
                 }
