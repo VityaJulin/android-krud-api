@@ -40,6 +40,7 @@ dependencies {
     implementation 'org.kodein.di:kodein-di-framework-ktor-server-jvm:6.3.3'
     testImplementation "io.ktor:ktor-server-tests:1.2.4"
     testImplementation "com.jayway.jsonpath:json-path:2.4.0"
+    implementation 'net.danlew:android.joda:2.10.6'
 }
 
 task stage(dependsOn: installDist)
