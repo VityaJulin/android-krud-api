@@ -52,6 +52,16 @@ class RoutingV1(
                             val me = call.authentication.principal<UserModel>()!!
                             call.respond(UserResponseDto.fromModel(me))
                         }
+
+                        get("users/{id}"){
+                            val userId = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
+                                    "id",
+                                    "Long"
+                            )
+                            val me = call.authentication.principal<UserModel>()
+                            val response = userService.getById(userId)
+                            call.respond(response)
+                        }
                     }
 
                     route("/posts") {
