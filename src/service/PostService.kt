@@ -8,7 +8,6 @@ import com.example.exception.InvalidOwnerException
 import com.example.model.AttachmentModel
 import com.example.model.MediaType
 import com.example.model.PostModel
-import com.example.model.UserModel
 import com.example.repository.PostRepository
 
 class PostService(private val repo: PostRepository, private val userService: UserService, private val resultSize: Int) {
@@ -81,9 +80,9 @@ class PostService(private val repo: PostRepository, private val userService: Use
         return combinePostDto(post, myId)
     }
 
-    suspend fun getPostsByUserId(currentUser: UserModel, userId: Long): List<PostResponseDto> {
-        return repo.getPostsByUserId(userId)
-                .map { PostResponseDto.from(currentUser, currentUser, it) }
+    suspend fun getPostsByUserId(userId: Long): List<PostResponseDto> {
+        val posts = repo.getAll()
+        return combinePostsDto(posts, userId)
     }
 
     private fun mapToSourceDto(post: PostModel, owners: List<UserResponseDto>, myId: Long): PostResponseDto {
