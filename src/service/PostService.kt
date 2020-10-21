@@ -83,7 +83,7 @@ class PostService(private val repo: PostRepository, private val userService: Use
 
     suspend fun getPostsByUserId(currentUser: UserModel, userId: Long): List<PostResponseDto> {
         return repo.getPostsByUserId(userId)
-                .map { PostResponseDto.fromModel(currentUser, currentUser, it) }
+                .map { PostResponseDto.from(currentUser, currentUser, it) }
     }
 
     private fun mapToSourceDto(post: PostModel, owners: List<UserResponseDto>, myId: Long): PostResponseDto {

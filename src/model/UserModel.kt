@@ -5,5 +5,7 @@ import io.ktor.auth.Principal
 data class UserModel(
     val id: Long = 0,
     val username: String,
-    val password: String
+    val password: String,
+    val avatar: AttachmentModel? = null,
+    val isReadOnly: Boolean = false
 ): Principal
