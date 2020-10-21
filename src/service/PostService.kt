@@ -8,6 +8,7 @@ import com.example.exception.InvalidOwnerException
 import com.example.model.AttachmentModel
 import com.example.model.MediaType
 import com.example.model.PostModel
+import com.example.model.UserModel
 import com.example.repository.PostRepository
 
 class PostService(private val repo: PostRepository, private val userService: UserService, private val resultSize: Int) {
@@ -80,11 +81,12 @@ class PostService(private val repo: PostRepository, private val userService: Use
         return combinePostDto(post, myId)
     }
 
-    private fun mapToSourceDto(
-            post: PostModel,
-            owners: List<UserResponseDto>,
-            myId: Long
-    ): PostResponseDto {
+    suspend fun getPostsByUserId(currentUser: UserModel, userId: Long): List<PostResponseDto> {
+        return repo.getPostsByUserId(userId)
+                .map { PostResponseDto.fromModel(currentUser, currentUser, it) }
+    }
+
+    private fun mapToSourceDto(post: PostModel, owners: List<UserResponseDto>, myId: Long): PostResponseDto {
         return PostResponseDto.from(
                 post = post,
                 source = null,
@@ -94,12 +96,7 @@ class PostService(private val repo: PostRepository, private val userService: Use
         )
     }
 
-    private fun mapToPostDto(
-            post: PostModel,
-            sourcesDto: List<PostResponseDto>,
-            owners: List<UserResponseDto>,
-            myId: Long
-    ): PostResponseDto {
+    private fun mapToPostDto(post: PostModel, sourcesDto: List<PostResponseDto>, owners: List<UserResponseDto>, myId: Long): PostResponseDto {
         return PostResponseDto.from(
                 post = post,
                 source = sourcesDto.find { it.id == post.sourceId },
@@ -109,12 +106,7 @@ class PostService(private val repo: PostRepository, private val userService: Use
         )
     }
 
-    private fun mapToPostDto(
-            post: PostModel,
-            sourceDto: PostResponseDto?,
-            owners: List<UserResponseDto>,
-            myId: Long
-    ): PostResponseDto {
+    private fun mapToPostDto(post: PostModel, sourceDto: PostResponseDto?, owners: List<UserResponseDto>, myId: Long): PostResponseDto {
         return PostResponseDto.from(
                 post = post,
                 source = sourceDto,
@@ -124,10 +116,7 @@ class PostService(private val repo: PostRepository, private val userService: Use
         )
     }
 
-    private suspend fun combinePostDto(
-            post: PostModel,
-            myId: Long
-    ): PostResponseDto {
+    private suspend fun combinePostDto(post: PostModel, myId: Long): PostResponseDto {
         val source = post.sourceId?.let { repo.getById(it) }
 
         val owners = userService.getByIds(listOfNotNull(post.ownerId, source?.ownerId))
@@ -139,10 +128,7 @@ class PostService(private val repo: PostRepository, private val userService: Use
     }
 
 
-    private suspend fun combinePostsDto(
-            posts: List<PostModel>,
-            myId: Long
-    ): List<PostResponseDto> {
+    private suspend fun combinePostsDto(posts: List<PostModel>, myId: Long): List<PostResponseDto> {
         val sources = repo.getByIds(posts.asSequence().map { it.sourceId }.filterNotNull().toList())
         val ownerIds = (posts + sources).map { it.ownerId }
         val owners = userService.getByIds(ownerIds)
