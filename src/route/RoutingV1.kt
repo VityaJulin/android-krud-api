@@ -152,7 +152,7 @@ class RoutingV1(
                                     "Long"
                             )
                             val me = call.authentication.principal<UserModel>()
-                            val response = postService.getPostsByUserId(me!!, userId)
+                            val response = postService.getPostsByUserId(userId)
                             call.respond(response)
                         }
                     }
