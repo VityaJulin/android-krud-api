@@ -62,6 +62,14 @@ class RoutingV1(
                             val response = userService.getById(userId)
                             call.respond(response)
                         }
+
+                        route("/media") {
+                            post {
+                                val multipart = call.receiveMultipart()
+                                val response = fileService.save(multipart)
+                                call.respond(response)
+                            }
+                        }
                     }
 
                     route("/posts") {
@@ -167,13 +175,7 @@ class RoutingV1(
                         }
                     }
 
-                    route("/media") {
-                        post {
-                            val multipart = call.receiveMultipart()
-                            val response = fileService.save(multipart)
-                            call.respond(response)
-                        }
-                    }
+
                 }
             }
         }
