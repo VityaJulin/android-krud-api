@@ -3,6 +3,7 @@ package com.example.service
 import io.ktor.features.NotFoundException
 import com.example.dto.PostRequestDto
 import com.example.dto.PostResponseDto
+import com.example.dto.StatisticResponseDto
 import com.example.dto.UserResponseDto
 import com.example.exception.InvalidOwnerException
 import com.example.model.AttachmentModel
@@ -83,6 +84,10 @@ class PostService(private val repo: PostRepository, private val userService: Use
     suspend fun getPostsByUserId(userId: Long): List<PostResponseDto> {
         val posts = repo.getAll()
         return combinePostsDto(posts, userId)
+    }
+
+    suspend fun getStatisticById(id: Long): List<StatisticResponseDto> {
+        return repo.getStatisticById(id).map { StatisticResponseDto.fromModel(it) }
     }
 
     private fun mapToSourceDto(post: PostModel, owners: List<UserResponseDto>, myId: Long): PostResponseDto {

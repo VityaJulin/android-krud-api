@@ -3,6 +3,7 @@ package com.example.repository
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import com.example.model.PostModel
+import com.example.model.Reaction
 
 class PostRepositoryInMemoryWithMutexImpl : PostRepository {
 
@@ -96,6 +97,18 @@ class PostRepositoryInMemoryWithMutexImpl : PostRepository {
     override suspend fun getPostsByUserId(userId: Long): List<PostModel> {
         mutex.withLock {
             return items.filter { it.ownerId == userId }
+        }
+    }
+
+    override suspend fun getStatisticById(postId: Long): List<Long> {
+        mutex.withLock {
+            return when (val index = items.indexOfFirst { it.id == postId }) {
+                -1 -> emptyList()
+                else -> {
+                    val item = items[index]
+                    item.likes.plus(item.dislikes).toList()
+                }
+            }
         }
     }
 }

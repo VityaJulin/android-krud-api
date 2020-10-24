@@ -12,6 +12,7 @@ data class PostModel(
         val link: String? = null,
         val type: PostType = PostType.POST,
         val attachment: AttachmentModel?
+
 )
 
 enum class PostType {

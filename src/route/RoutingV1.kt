@@ -1,15 +1,5 @@
 package com.example.route
 
-import io.ktor.application.call
-import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
-import io.ktor.features.ParameterConversionException
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.*
-import io.ktor.request.receive
-import io.ktor.request.receiveMultipart
-import io.ktor.response.respond
-import io.ktor.routing.*
 import com.example.dto.AuthenticationRequestDto
 import com.example.dto.PostRequestDto
 import com.example.dto.RegistrationRequestDto
@@ -18,12 +8,20 @@ import com.example.model.UserModel
 import com.example.service.FileService
 import com.example.service.PostService
 import com.example.service.UserService
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
 
 class RoutingV1(
-    private val staticPath: String,
-    private val postService: PostService,
-    private val fileService: FileService,
-    private val userService: UserService
+        private val staticPath: String,
+        private val postService: PostService,
+        private val fileService: FileService,
+        private val userService: UserService
 ) {
     fun setup(configuration: Routing) {
         with(configuration) {
@@ -53,7 +51,7 @@ class RoutingV1(
                             call.respond(UserResponseDto.fromModel(me))
                         }
 
-                        get("users/{id}"){
+                        get("users/{id}") {
                             val userId = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
                                     "id",
                                     "Long"
@@ -86,8 +84,8 @@ class RoutingV1(
                         get("/before/{id}") {
                             val me = call.authentication.principal<UserModel>()!!
                             val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
-                                "id",
-                                "Long"
+                                    "id",
+                                    "Long"
                             )
                             val response = postService.getBefore(id, myId = me.id)
                             call.respond(response)
@@ -95,8 +93,8 @@ class RoutingV1(
                         get("/after/{id}") {
                             val me = call.authentication.principal<UserModel>()!!
                             val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
-                                "id",
-                                "Long"
+                                    "id",
+                                    "Long"
                             )
                             val response = postService.getAfter(id, myId = me.id)
                             call.respond(response)
@@ -104,8 +102,8 @@ class RoutingV1(
                         get("/{id}") {
                             val me = call.authentication.principal<UserModel>()!!
                             val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
-                                "id",
-                                "Long"
+                                    "id",
+                                    "Long"
                             )
                             val response = postService.getById(id, myId = me.id)
                             call.respond(response)
@@ -119,8 +117,8 @@ class RoutingV1(
                         delete("/{id}") {
                             val me = call.authentication.principal<UserModel>()!!
                             val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
-                                "id",
-                                "Long"
+                                    "id",
+                                    "Long"
                             )
                             postService.removeById(id, myId = me.id)
                             call.respond(HttpStatusCode.NoContent)
@@ -128,8 +126,8 @@ class RoutingV1(
                         post("/{id}/likes") {
                             val me = call.authentication.principal<UserModel>()!!
                             val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
-                                "id",
-                                "Long"
+                                    "id",
+                                    "Long"
                             )
                             val response = postService.likeById(id, myId = me.id)
                             call.respond(response)
@@ -137,8 +135,8 @@ class RoutingV1(
                         delete("/{id}/likes") {
                             val me = call.authentication.principal<UserModel>()!!
                             val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
-                                "id",
-                                "Long"
+                                    "id",
+                                    "Long"
                             )
                             val response = postService.dislikeById(id, myId = me.id)
                             call.respond(response)
@@ -157,14 +155,14 @@ class RoutingV1(
                         post("/{id}/reposts") {
                             val me = call.authentication.principal<UserModel>()!!
                             val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
-                                "id",
-                                "Long"
+                                    "id",
+                                    "Long"
                             )
                             val response = postService.repostById(id, myId = me.id)
                             call.respond(response)
                         }
 
-                        get("user/{id}"){
+                        get("user/{id}") {
                             val userId = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
                                     "id",
                                     "Long"
@@ -173,9 +171,17 @@ class RoutingV1(
                             val response = postService.getPostsByUserId(userId)
                             call.respond(response)
                         }
+
+                        get("reactions/{id}") {
+                            val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
+                                    "id",
+                                    "Long"
+                            )
+                            val response = postService.getStatisticById(id)
+                            call.respond(response)
+
+                        }
                     }
-
-
                 }
             }
         }
