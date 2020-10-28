@@ -1,9 +1,12 @@
 package com.example.repository
 
+import com.example.dto.UserResponseDto
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import com.example.model.PostModel
 import com.example.model.Reaction
+import com.example.model.ReactionType
+import java.util.*
 
 class PostRepositoryInMemoryWithMutexImpl : PostRepository {
 
@@ -52,13 +55,21 @@ class PostRepositoryInMemoryWithMutexImpl : PostRepository {
         }
     }
 
-    override suspend fun likeById(id: Long, myId: Long): PostModel? {
+    override suspend fun likeById(id: Long, user: UserResponseDto): PostModel? {
         mutex.withLock {
             return when (val index = items.indexOfFirst { it.id == id }) {
                 -1 -> null
                 else -> {
                     val item = items[index]
-                    val copy = item.copy(likes = item.likes + myId)
+                    val copy = item.copy(
+                            likes = item.likes.plus(
+                                    Reaction(
+                                            user,
+                                            Date().time,
+                                            ReactionType.LIKE
+                                    )
+                            )
+                    )
                     items[index] = copy
                     copy
                 }
@@ -66,13 +77,21 @@ class PostRepositoryInMemoryWithMutexImpl : PostRepository {
         }
     }
 
-    override suspend fun dislikeById(id: Long, myId: Long): PostModel? {
+    override suspend fun dislikeById(id: Long, user: UserResponseDto): PostModel? {
         mutex.withLock {
             return when (val index = items.indexOfFirst { it.id == id }) {
                 -1 -> null
                 else -> {
                     val item = items[index]
-                    val copy = item.copy(dislikes = item.dislikes + myId)
+                    val copy = item.copy(
+                            dislikes = item.dislikes.plus(
+                                    Reaction(
+                                            user,
+                                            Date().time,
+                                            ReactionType.DISLIKE
+                                    )
+                            )
+                    )
                     items[index] = copy
                     copy
                 }
@@ -100,7 +119,7 @@ class PostRepositoryInMemoryWithMutexImpl : PostRepository {
         }
     }
 
-    override suspend fun getStatisticById(postId: Long): List<Long> {
+    override suspend fun getStatisticById(postId: Long): List<Reaction> {
         mutex.withLock {
             return when (val index = items.indexOfFirst { it.id == postId }) {
                 -1 -> emptyList()
