@@ -172,7 +172,7 @@ class RoutingV1(
                             call.respond(response)
                         }
 
-                        get("statistic/{id}") {
+                        get("reactions/{id}") {
                             val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
                                     "id",
                                     "Long"

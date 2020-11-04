@@ -1,6 +1,5 @@
 package com.example.service
 
-import io.ktor.features.NotFoundException
 import com.example.dto.PostRequestDto
 import com.example.dto.PostResponseDto
 import com.example.dto.StatisticResponseDto
@@ -11,6 +10,7 @@ import com.example.model.MediaType
 import com.example.model.PostModel
 import com.example.model.UserModel
 import com.example.repository.PostRepository
+import io.ktor.features.*
 
 class PostService(private val repo: PostRepository, private val userService: UserService, private val resultSize: Int) {
     suspend fun getAll(myId: Long): List<PostResponseDto> {
