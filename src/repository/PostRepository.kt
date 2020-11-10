@@ -10,9 +10,9 @@ interface PostRepository {
     suspend fun getByIds(ids: Collection<Long>): List<PostModel>
     suspend fun save(item: PostModel): PostModel
     suspend fun removeByIdAndOwnerId(id: Long, ownerId: Long)
-    suspend fun likeById(id: Long, user: UserResponseDto): PostModel?
-    suspend fun dislikeById(id: Long, user: UserResponseDto): PostModel?
+    suspend fun likeById(id: Long, myId: Long): PostModel?
+    suspend fun dislikeById(id: Long, myId: Long): PostModel?
     suspend fun repostById(id: Long, myId: Long): PostModel?
     suspend fun getPostsByUserId(userId: Long): List<PostModel>
-    suspend fun getStatisticById(postId: Long): List<Reaction>
+    suspend fun getStatisticById(postId: Long): List<Long>
 }

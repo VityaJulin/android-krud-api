@@ -8,7 +8,6 @@ import com.example.exception.InvalidOwnerException
 import com.example.model.AttachmentModel
 import com.example.model.MediaType
 import com.example.model.PostModel
-import com.example.model.UserModel
 import com.example.repository.PostRepository
 import io.ktor.features.*
 
@@ -67,9 +66,9 @@ class PostService(private val repo: PostRepository, private val userService: Use
         repo.removeByIdAndOwnerId(id, ownerId = myId)
     }
 
-    suspend fun likeById(postId: Long, user: UserModel): PostResponseDto {
-        val post = repo.likeById(postId, UserResponseDto.fromModel(user)) ?: throw NotFoundException()
-        return PostResponseDto.from(user, userService.getModelById(postAuthor.id)!!, repo.getPostById(model.id))
+    suspend fun likeById(id: Long, myId: Long): PostResponseDto {
+        val post = repo.dislikeById(id, myId) ?: throw NotFoundException()
+        return combinePostDto(post, myId)
     }
 
     suspend fun dislikeById(id: Long, myId: Long): PostResponseDto {
