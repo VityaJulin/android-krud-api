@@ -103,13 +103,14 @@ class PostRepositoryInMemoryWithMutexImpl : PostRepository {
         }
     }
 
-    override suspend fun getStatisticById(postId: Long): List<Long> {
+    override suspend fun getStatisticById(postId: Long): List<Reaction> {
         mutex.withLock {
             return when (val index = items.indexOfFirst { it.id == postId }) {
                 -1 -> emptyList()
                 else -> {
-                    val item = items[index]
-                    item.likes.plus(item.dislikes).toList()
+                    /*val item = items[index]
+                    item.likes.plus(item.dislikes).toList()*/
+                    emptyList()
                 }
             }
         }
