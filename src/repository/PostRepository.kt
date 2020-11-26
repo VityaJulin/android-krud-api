@@ -14,5 +14,5 @@ interface PostRepository {
     suspend fun dislikeById(id: Long, myId: Long): PostModel?
     suspend fun repostById(id: Long, myId: Long): PostModel?
     suspend fun getPostsByUserId(userId: Long): List<PostModel>
-    suspend fun getStatisticById(postId: Long): List<Long>
+    suspend fun getStatisticById(postId: Long): List<Reaction>
 }
