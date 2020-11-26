@@ -7,10 +7,7 @@ import com.example.repository.PostRepositoryInMemoryWithMutexImpl
 import com.example.repository.UserRepository
 import com.example.repository.UserRepositoryInMemoryWithMutexImpl
 import com.example.route.RoutingV1
-import com.example.service.FileService
-import com.example.service.JWTTokenService
-import com.example.service.PostService
-import com.example.service.UserService
+import com.example.service.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -58,13 +55,20 @@ fun Application.module() {
     }
 
     install(KodeinFeature) {
-        constant(tag = "upload-dir") with (environment.config.propertyOrNull("example.upload.dir")?.getString()
+        constant(tag = "upload-dir") with (environment.config.propertyOrNull("ncraft.upload.dir")?.getString()
             ?: throw ConfigurationException("Upload dir is not specified"))
-        constant(tag = "result-size") with (environment.config.propertyOrNull("example.api.result-size")?.getString()
-            ?.toInt()
+        constant(tag = "result-size") with (environment.config.propertyOrNull("ncraft.api.result-size")?.getString()?.toInt()
             ?: throw ConfigurationException("API result size is not specified"))
-        constant(tag = "jwt-secret") with (environment.config.propertyOrNull("example.jwt.secret")?.getString()
+        constant(tag = "jwt-secret") with (environment.config.propertyOrNull("ncraft.jwt.secret")?.getString()
             ?: throw ConfigurationException("JWT Secret is not specified"))
+        constant(tag = "fcm-password") with (environment.config.propertyOrNull("ncraft.fcm.password")?.getString()
+            ?: throw ConfigurationException("FCM Password is not specified"))
+        constant(tag = "fcm-salt") with (environment.config.propertyOrNull("ncraft.fcm.salt")?.getString()
+            ?: throw ConfigurationException("FCM Salt is not specified"))
+        constant(tag = "fcm-db-url") with (environment.config.propertyOrNull("ncraft.fcm.db-url")?.getString()
+            ?: throw ConfigurationException("FCM DB Url is not specified"))
+        constant(tag = "fcm-path") with (environment.config.propertyOrNull("ncraft.fcm.path")?.getString()
+            ?: throw ConfigurationException("FCM JSON Path is not specified"))
         bind<PasswordEncoder>() with eagerSingleton { BCryptPasswordEncoder() }
         bind<JWTTokenService>() with eagerSingleton { JWTTokenService(instance(tag = "jwt-secret")) }
         bind<PostRepository>() with eagerSingleton { PostRepositoryInMemoryWithMutexImpl() }
@@ -72,9 +76,22 @@ fun Application.module() {
         bind<FileService>() with eagerSingleton { FileService(instance(tag = "upload-dir")) }
         bind<UserRepository>() with eagerSingleton { UserRepositoryInMemoryWithMutexImpl() }
         bind<UserService>() with eagerSingleton {
-            UserService(instance(), instance(), instance()).apply {
+            UserService(instance(), instance(), instance()).also {
                 runBlocking {
-                    this@apply.register(RegistrationRequestDto("vasya", "password"))
+                    it.register(RegistrationRequestDto("vasya", "password"))
+                }
+            }
+        }
+        bind<FCMService>() with eagerSingleton {
+            FCMService(
+                instance(tag = "fcm-db-url"),
+                instance(tag = "fcm-password"),
+                instance(tag = "fcm-salt"),
+                instance(tag = "fcm-path")
+            ).also {
+                runBlocking {
+                    // FIXME: PUT TOKEN FROM DEVICE HERE FOR DEMO PURPOSES
+                    it.send(1, "<PUT TOKEN FROM DEVICE HERE>", "Your post liked!")
                 }
             }
         }
