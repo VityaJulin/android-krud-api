@@ -55,19 +55,19 @@ fun Application.module() {
     }
 
     install(KodeinFeature) {
-        constant(tag = "upload-dir") with (environment.config.propertyOrNull("ncraft.upload.dir")?.getString()
+        constant(tag = "upload-dir") with (environment.config.propertyOrNull("example.upload.dir")?.getString()
             ?: throw ConfigurationException("Upload dir is not specified"))
-        constant(tag = "result-size") with (environment.config.propertyOrNull("ncraft.api.result-size")?.getString()?.toInt()
+        constant(tag = "result-size") with (environment.config.propertyOrNull("example.api.result-size")?.getString()?.toInt()
             ?: throw ConfigurationException("API result size is not specified"))
-        constant(tag = "jwt-secret") with (environment.config.propertyOrNull("ncraft.jwt.secret")?.getString()
+        constant(tag = "jwt-secret") with (environment.config.propertyOrNull("example.jwt.secret")?.getString()
             ?: throw ConfigurationException("JWT Secret is not specified"))
-        constant(tag = "fcm-password") with (environment.config.propertyOrNull("ncraft.fcm.password")?.getString()
+        constant(tag = "fcm-password") with (environment.config.propertyOrNull("example.fcm.password")?.getString()
             ?: throw ConfigurationException("FCM Password is not specified"))
-        constant(tag = "fcm-salt") with (environment.config.propertyOrNull("ncraft.fcm.salt")?.getString()
+        constant(tag = "fcm-salt") with (environment.config.propertyOrNull("example.fcm.salt")?.getString()
             ?: throw ConfigurationException("FCM Salt is not specified"))
-        constant(tag = "fcm-db-url") with (environment.config.propertyOrNull("ncraft.fcm.db-url")?.getString()
+        constant(tag = "fcm-db-url") with (environment.config.propertyOrNull("example.fcm.db-url")?.getString()
             ?: throw ConfigurationException("FCM DB Url is not specified"))
-        constant(tag = "fcm-path") with (environment.config.propertyOrNull("ncraft.fcm.path")?.getString()
+        constant(tag = "fcm-path") with (environment.config.propertyOrNull("example.fcm.path")?.getString()
             ?: throw ConfigurationException("FCM JSON Path is not specified"))
         bind<PasswordEncoder>() with eagerSingleton { BCryptPasswordEncoder() }
         bind<JWTTokenService>() with eagerSingleton { JWTTokenService(instance(tag = "jwt-secret")) }
@@ -91,7 +91,7 @@ fun Application.module() {
             ).also {
                 runBlocking {
                     // FIXME: PUT TOKEN FROM DEVICE HERE FOR DEMO PURPOSES
-                    it.send(1, "<PUT TOKEN FROM DEVICE HERE>", "Your post liked!")
+                    it.send(1, "cZAXHjs1S1Sg7yQrh0zHTX:APA91bGG4-WFJlK7kvsEBTFtCa_wEY2LowpRIrTRet44OEyWGunLlWEmX-g-zN79MpA2OnnW0FBb_tlojAZF_r3BoWY3ngUX8t8UKGColHLzpfzfgBqnRlyn5EKyfELFamY89kCGLPrJ", "Your post liked!")
                 }
             }
         }
