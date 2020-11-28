@@ -67,7 +67,7 @@ class PostService(private val repo: PostRepository, private val userService: Use
     }
 
     suspend fun likeById(id: Long, myId: Long): PostResponseDto {
-        val post = repo.dislikeById(id, myId) ?: throw NotFoundException()
+        val post = repo.likeById(id, myId) ?: throw NotFoundException()
         return combinePostDto(post, myId)
     }
 
