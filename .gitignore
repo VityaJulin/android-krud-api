@@ -2,7 +2,6 @@
 /.idea
 /out
 /build
-/fcm/
 *.iml
 *.ipr
 *.iws
